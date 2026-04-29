@@ -12,7 +12,7 @@ This is a *Factorio* mod that adjusts map colors of Gleba terrain to represent f
 - Configurable map colors for highland, midland, lowland, shallow water, deep water, and any other tile type not covered
 - Automatically interpolates map colors for medium fertility ground
 - Extra contrast can be added between configurable agricultural stages
-- Automatially adjusts map colors for trees to mildly contrast with chosen and calculated ground colors
+- Automatically adjusts map colors for trees to mildly contrast with chosen and calculated ground colors
 
 ## Implementation
 

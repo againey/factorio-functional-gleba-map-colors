@@ -8,4 +8,4 @@ Date: 29. 04. 2026
   Minor Features:
     - Automatically interpolates map colors for medium fertility ground
     - Extra contrast can be added between configurable agricultural stages
-    - Automatially adjusts map colors for trees to mildly contrast with chosen and calculated ground colors
+    - Automatically adjusts map colors for trees to mildly contrast with chosen and calculated ground colors
