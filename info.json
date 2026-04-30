@@ -8,7 +8,7 @@
 	"dependencies": [
 		"base >= 2.0",
 		"space-age",
-		"hndy-color >= 1.0.0"
+		"hndy-color >= 1.1.0"
 	],
 	"quality_required": false,
 	"space_travel_required": false,

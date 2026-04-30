@@ -1,6 +1,9 @@
 local ColorOklch = require("__hndy-color__.oklch")
 local Arithmetic = require("__hndy-color__.util.arithmetic")
 local modulo = Arithmetic.modulo
+local lerp = Arithmetic.lerp
+
+--helpers.write_file("functional-gleba-map-colors.txt", {"", "----------------------------------------\n"})
 
 local contrast_value_map = {
 	["very-high"] = 3.2,
@@ -129,6 +132,36 @@ local function set_map_color_for_trees(tree_names, color)
 	end
 end
 
+local function set_terrain_effect_lightness_for_tiles(tile_names, lightness, allow_lighter)
+	for tile_name, _ in pairs(tile_names) do
+		local tile_prototype = data.raw.tile[tile_name]
+		if tile_prototype then
+			local collision_mask = data.raw.tile[tile_name].collision_mask
+			if collision_mask and collision_mask.layers and collision_mask.layers.water_tile == true then
+				if tile_prototype.effect_color then
+					local effect_color = ColorOklch.from_game_color(tile_prototype.effect_color)
+					if allow_lighter ~= true or effect_color.l < lightness then
+						if tile_prototype.effect_color_secondary and effect_color.l > 0.0 then
+							local effect_color_secondary = ColorOklch.from_game_color(tile_prototype.effect_color_secondary)
+							local relative_lightness = effect_color_secondary.l / effect_color.l
+
+							effect_color_secondary.l = lightness * relative_lightness
+							tile_prototype.effect_color_secondary = effect_color_secondary:self_safe_normalize():to_game_color_array()
+						end
+
+						effect_color.l = lightness
+						tile_prototype.effect_color = effect_color:self_safe_normalize():to_game_color_array()
+					end
+				end
+			end
+		end
+	end
+end
+
+local function set_terrain_effect_min_lightness_for_tiles(tile_names, min_lightness)
+	set_terrain_effect_lightness_for_tiles(tile_names, min_lightness, true)
+end
+
 -- Collect Gleba tile and tree information from prototypes.
 
 local gleba_tiles = {}
@@ -219,6 +252,11 @@ local highland_color = ColorOklch.from_game_color(highland_game_color):with_alph
 local midland_color = ColorOklch.from_game_color(midland_game_color):with_alpha(1.0):self_safe_normalize()
 local lowland_color = ColorOklch.from_game_color(lowland_game_color):with_alpha(1.0):self_safe_normalize()
 
+local adjust_water_contrast = settings.startup["functional-gleba-map-colors-adjust-water-contrast"].value
+local fertile_water_lightness = settings.startup["functional-gleba-map-colors-fertile-water-lightness"].value
+local shallow_water_lightness = settings.startup["functional-gleba-map-colors-shallow-water-lightness"].value
+local deep_water_lightness = settings.startup["functional-gleba-map-colors-deep-water-lightness"].value
+
 -- Calculate interpolation values for low, medium, and high fertility tiles.
 
 local low_fertility_lerp = 0.0
@@ -294,3 +332,18 @@ set_map_color_for_trees(yumako_neighbor_trees, yumako_neighbor_tree_color:to_gam
 set_map_color_for_trees(jellynut_neighbor_trees, jellynut_neighbor_tree_color:to_game_color())
 set_map_color_for_trees(shared_neighbor_trees, shared_neighbor_tree_color:to_game_color())
 set_map_color_for_trees(other_trees, other_tree_color:to_game_color())
+
+-- Apply new lightness values to tile effect colors.
+
+if adjust_water_contrast then
+	set_terrain_effect_min_lightness_for_tiles(yumako_tile_tiers.high_fertility, fertile_water_lightness)
+	set_terrain_effect_min_lightness_for_tiles(yumako_tile_tiers.medium_fertility, fertile_water_lightness)
+	set_terrain_effect_min_lightness_for_tiles(yumako_tile_tiers.low_fertility, fertile_water_lightness)
+
+	set_terrain_effect_min_lightness_for_tiles(jellynut_tile_tiers.high_fertility, fertile_water_lightness)
+	set_terrain_effect_min_lightness_for_tiles(jellynut_tile_tiers.medium_fertility, fertile_water_lightness)
+	set_terrain_effect_min_lightness_for_tiles(jellynut_tile_tiers.low_fertility, fertile_water_lightness)
+
+	set_terrain_effect_lightness_for_tiles(nonagricultural_tile_tiers.shallow_water, shallow_water_lightness)
+	set_terrain_effect_lightness_for_tiles(nonagricultural_tile_tiers.deep_water, deep_water_lightness)
+end
