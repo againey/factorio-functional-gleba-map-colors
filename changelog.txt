@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 30. 04. 2026
+  Features:
+    - Configurable contrast in the main view between fertile and infertile wetlands and deep water
+---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 29. 04. 2026
   Features:
