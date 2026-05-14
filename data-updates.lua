@@ -146,11 +146,11 @@ local function set_terrain_effect_lightness_for_tiles(tile_names, lightness, all
 							local relative_lightness = effect_color_secondary.l / effect_color.l
 
 							effect_color_secondary.l = lightness * relative_lightness
-							tile_prototype.effect_color_secondary = effect_color_secondary:self_safe_normalize():to_game_color_array()
+							tile_prototype.effect_color_secondary = effect_color_secondary:self_safe_normalize():to_game_color()
 						end
 
 						effect_color.l = lightness
-						tile_prototype.effect_color = effect_color:self_safe_normalize():to_game_color_array()
+						tile_prototype.effect_color = effect_color:self_safe_normalize():to_game_color()
 					end
 				end
 			end
